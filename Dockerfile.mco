@@ -1,0 +1,19 @@
+# THIS FILE IS GENERATED FROM Dockerfile DO NOT EDIT
+FROM registry.ci.openshift.org/ocp/builder:rhel-8-golang-1.15-openshift-4.8 AS builder
+WORKDIR /go/src/github.com/openshift/machine-config-operator
+RUN git clone https://github.com/openshift/machine-config-operator.git /go/src/github.com/openshift/machine-config-operator && \
+    git fetch origin pull/2606/head:changes && \
+    git config --global user.email "you@domain.com" && \
+    git config --global user.name "github_username" && \
+    git checkout changes && \
+    git rebase master
+RUN make install DESTDIR=./instroot && tar -C instroot -cf instroot.tar .
+
+FROM registry.ci.openshift.org/ocp/4.8:base
+COPY --from=builder /go/src/github.com/openshift/machine-config-operator/instroot.tar /tmp/instroot.tar
+RUN cd / && tar xf /tmp/instroot.tar && rm -f /tmp/instroot.tar
+COPY --from=builder /go/src/github.com/openshift/machine-config-operator/install /manifests
+RUN if ! rpm -q util-linux; then yum install -y util-linux && yum clean all && rm -rf /var/cache/yum/*; fi
+COPY --from=builder /go/src/github.com/openshift/machine-config-operator/templates /etc/mcc/templates
+ENTRYPOINT ["/usr/bin/machine-config-operator"]
+LABEL io.openshift.release.operator true
