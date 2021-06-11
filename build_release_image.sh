@@ -12,6 +12,8 @@ help() {
     echo "-a, --auth      path of registry auth file, default: ./config.json"
     echo "--cccmo         custom cluster-cloud-controller-manager-operator image name, default: quay.io/openshift/origin-cluster-cloud-controller-manager-operator:$RELEASE"
     echo "--aws-ccm       custom aws cloud-controller-manager image name, default: gcr.io/k8s-staging-provider-aws/cloud-controller-manager:v1.19.0-alpha.1"
+    echo "--azure-ccm     custom azure cloud-controller-manager image name, default: mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.0"
+    echo "--azure-node    custom azure node manager image name, default: mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.0"
     echo "--openstack-ccm custom openstack cloud-controller-manager image name, default: quay.io/openshift/origin-openstack-cloud-controller-manager:$RELEASE"
     echo "--kapio         custom kube-apiserver-operator image name, default: current kube-apiserver-operator image from the release payload"
     echo "--kcmo          custom kube-controller-manager-operator image name, default: current kube-controller-manager-operator image from the release payload"
@@ -24,9 +26,11 @@ help() {
 : ${OC_REGISTRY_AUTH_FILE:="config.json"}
 : ${CCCMO_IMAGE:="quay.io/openshift/origin-cluster-cloud-controller-manager-operator:$RELEASE"}
 : ${OCCM_IMAGE:="quay.io/openshift/origin-openstack-cloud-controller-manager:$RELEASE"}
-# TODO(mfedosin): replace upstream aws ccm image with "quay.io/openshift/origin-aws-cloud-controller-manager:$RELEASE"
-# when https://github.com/openshift/release/pull/18995 is merged
+# TODO(mfedosin): replace upstream aws and azure images with the downstream ones when they are
+# published in quay.io.
 : ${AWSCCM_IMAGE:="gcr.io/k8s-staging-provider-aws/cloud-controller-manager:v1.19.0-alpha.1"}
+: ${AZURECCM_IMAGE:="mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.0"}
+: ${AZURENODE_IMAGE:="mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.0"}
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -62,6 +66,16 @@ while [[ $# -gt 0 ]]; do
 
         --aws-ccm)
             AWSCCM_IMAGE=$2
+            shift 2
+            ;;
+
+        --azure-ccm)
+            AZURECCM_IMAGE=$2
+            shift 2
+            ;;
+
+        --azure-node)
+            AZURENODE_IMAGE=$2
             shift 2
             ;;
 
@@ -120,6 +134,8 @@ oc adm release new \
     cluster-cloud-controller-manager-operator=$CCCMO_IMAGE \
     openstack-cloud-controller-manager=$OCCM_IMAGE \
     aws-cloud-controller-manager=$AWSCCM_IMAGE \
+    azure-cloud-node-manager=$AZURENODE_IMAGE \
+    azure-cloud-controller-manager=$AZURECCM_IMAGE \
     `[ ! -z "$KAPIO_IMAGE" ] && echo cluster-kube-apiserver-operator=$KAPIO_IMAGE` \
     `[ ! -z "$KCMO_IMAGE" ] && echo cluster-kube-controller-manager-operator=$KCMO_IMAGE` \
     `[ ! -z "$MCO_IMAGE" ] && echo machine-config-operator=$MCO_IMAGE`
