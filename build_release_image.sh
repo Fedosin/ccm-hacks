@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 help() {
     echo "Build a release image with custom CCM components and upload it to quay.io"
     echo ""
@@ -11,9 +13,9 @@ help() {
     echo "-r, --release   openshift release version, default: 4.8"
     echo "-a, --auth      path of registry auth file, default: ./config.json"
     echo "--cccmo         custom cluster-cloud-controller-manager-operator image name, default: quay.io/openshift/origin-cluster-cloud-controller-manager-operator:$RELEASE"
-    echo "--aws-ccm       custom aws cloud-controller-manager image name, default: gcr.io/k8s-staging-provider-aws/cloud-controller-manager:v1.19.0-alpha.1"
-    echo "--azure-ccm     custom azure cloud-controller-manager image name, default: mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.0"
-    echo "--azure-node    custom azure node manager image name, default: mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.0"
+    echo "--aws-ccm       custom aws cloud-controller-manager image name, default: quay.io/openshift/origin-aws-cloud-controller-manager:$RELEASE"
+    echo "--azure-ccm     custom azure cloud-controller-manager image name, default: quay.io/openshift/origin-azure-cloud-controller-manager:$RELEASE"
+    echo "--azure-node    custom azure node manager image name, default: quay.io/openshift/origin-azure-cloud-node-manager:$RELEASE"
     echo "--openstack-ccm custom openstack cloud-controller-manager image name, default: quay.io/openshift/origin-openstack-cloud-controller-manager:$RELEASE"
     echo "--kapio         custom kube-apiserver-operator image name, default: current kube-apiserver-operator image from the release payload"
     echo "--kcmo          custom kube-controller-manager-operator image name, default: current kube-controller-manager-operator image from the release payload"
@@ -25,12 +27,10 @@ help() {
 : ${RELEASE:="4.8"}
 : ${OC_REGISTRY_AUTH_FILE:="config.json"}
 : ${CCCMO_IMAGE:="quay.io/openshift/origin-cluster-cloud-controller-manager-operator:$RELEASE"}
+: ${AWSCCM_IMAGE:="quay.io/openshift/origin-aws-cloud-controller-manager:$RELEASE"}
+: ${AZURECCM_IMAGE:="quay.io/openshift/origin-azure-cloud-controller-manager:$RELEASE"}
+: ${AZURENODE_IMAGE:="quay.io/openshift/origin-azure-cloud-node-manager:$RELEASE"}
 : ${OCCM_IMAGE:="quay.io/openshift/origin-openstack-cloud-controller-manager:$RELEASE"}
-# TODO(mfedosin): replace upstream aws and azure images with the downstream ones when they are
-# published in quay.io.
-: ${AWSCCM_IMAGE:="gcr.io/k8s-staging-provider-aws/cloud-controller-manager:v1.19.0-alpha.1"}
-: ${AZURECCM_IMAGE:="mcr.microsoft.com/oss/kubernetes/azure-cloud-controller-manager:v1.0.0"}
-: ${AZURENODE_IMAGE:="mcr.microsoft.com/oss/kubernetes/azure-cloud-node-manager:v1.0.0"}
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -102,12 +102,10 @@ while [[ $# -gt 0 ]]; do
         *)
             echo "Invalid option $1"
             help
-            exit 0
+            exit 1
             ;;
     esac
 done
-
-set -ex
 
 if [ -z "$USERNAME" ]; then
     echo "-u/--username was not provided, exiting ..."
