@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 help() {
     echo "Build an operator image with custom changes to support external cloud providers"
@@ -8,7 +8,7 @@ help() {
     echo "Usage: ./build_operator_image.sh [options]"
     echo "Options:"
     echo "-h, --help      show this message"
-    echo "-o, --operator  operator name to build, available options: mco, kapio, kcmo"
+    echo "-o, --operator  operator name to build, examples: machine-config-operator, cluster-kube-controller-manager-operator"
     echo "-i, --id        id of your pull request to apply on top of the master branch"
     echo "-u, --username  registered username in quay.io"
     echo "-t, --tag       push to a custom tag in your origin release image repo, default: latest"
