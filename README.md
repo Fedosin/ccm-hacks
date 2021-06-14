@@ -23,11 +23,12 @@ For OpenSHift's quay.io, the credentials need to be taken from https://cloud.red
 ```txt
 Usage: ./build_operator_image.sh [options]
 Options:
--h, --help      show this message
--o, --operator  operator name to build, examples: machine-config-operator, cluster-kube-controller-manager-operator
--i, --id        id of your pull request to apply on top of the master branch
--u, --username  registered username in quay.io
--t, --tag       push to a custom tag in your origin release image repo, default: latest
+-h, --help        show this message
+-o, --operator    operator name to build, examples: machine-config-operator, cluster-kube-controller-manager-operator
+-i, --id          id of your pull request to apply on top of the master branch
+-u, --username    registered username in quay.io
+-t, --tag         push to a custom tag in your origin release image repo, default: latest
+-d, --dockerfile  non-default Dockerfile name, default: Dockerfile
 ```
 
 For instance, if you want to build a Machine Config Operator image with your custom change specified by PR [\#2606](https://github.com/openshift/machine-config-operator/pull/2606) and then push it into your personal quay.io, execute

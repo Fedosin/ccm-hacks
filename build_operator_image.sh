@@ -7,15 +7,17 @@ help() {
     echo ""
     echo "Usage: ./build_operator_image.sh [options]"
     echo "Options:"
-    echo "-h, --help      show this message"
-    echo "-o, --operator  operator name to build, examples: machine-config-operator, cluster-kube-controller-manager-operator"
-    echo "-i, --id        id of your pull request to apply on top of the master branch"
-    echo "-u, --username  registered username in quay.io"
-    echo "-t, --tag       push to a custom tag in your origin release image repo, default: latest"
+    echo "-h, --help        show this message"
+    echo "-o, --operator    operator name to build, examples: machine-config-operator, cluster-kube-controller-manager-operator"
+    echo "-i, --id          id of your pull request to apply on top of the master branch"
+    echo "-u, --username    registered username in quay.io"
+    echo "-t, --tag         push to a custom tag in your origin release image repo, default: latest"
+    echo "-d, --dockerfile  non-default Dockerfile name, default: Dockerfile"
     echo ""
 }
 
 TAG="latest"
+DOCKERFILE="Dockerfile"
 
 # Parse Options
 while [[ $# -gt 0 ]]; do
@@ -42,6 +44,11 @@ while [[ $# -gt 0 ]]; do
 
         -i|--id)
             PRID=$2
+            shift 2
+            ;;
+
+        -d|--dockerfile)
+            DOCKERFILE=$2
             shift 2
             ;;
 
@@ -82,7 +89,7 @@ git rebase master
 echo "Setting operator image to $OPERATOR_IMAGE"
 
 echo "Start building operator image"
-podman build --no-cache -t $OPERATOR_IMAGE .
+podman build --no-cache -t $OPERATOR_IMAGE -f $DOCKERFILE
 
 echo "Pushing operator image to quay.io"
 podman push $OPERATOR_IMAGE
