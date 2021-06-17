@@ -11,7 +11,7 @@ help() {
     echo "-u, --username  registered username in quay.io"    
     echo "-t, --tag       push to a custom tag in your origin release image repo, default: latest"
     echo "-r, --release   openshift release version, default: 4.9"
-    echo "-a, --auth      path of registry auth file, default: ./config.json"
+    echo "-a, --auth      path of registry auth file, default: ./pull-secret.txt"
     echo "--cccmo         custom cluster-cloud-controller-manager-operator image name, default: quay.io/openshift/origin-cluster-cloud-controller-manager-operator:$RELEASE"
     echo "--aws-ccm       custom aws cloud-controller-manager image name, default: quay.io/openshift/origin-aws-cloud-controller-manager:$RELEASE"
     echo "--azure-ccm     custom azure cloud-controller-manager image name, default: quay.io/openshift/origin-azure-cloud-controller-manager:$RELEASE"
@@ -25,7 +25,7 @@ help() {
 : ${GOPATH:=${HOME}/go}
 : ${TAG:="latest"}
 : ${RELEASE:="4.9"}
-: ${OC_REGISTRY_AUTH_FILE:="config.json"}
+: ${OC_REGISTRY_AUTH_FILE:="pull-secret.txt"}
 : ${CCCMO_IMAGE:="quay.io/openshift/origin-cluster-cloud-controller-manager-operator:$RELEASE"}
 : ${AWSCCM_IMAGE:="quay.io/openshift/origin-aws-cloud-controller-manager:$RELEASE"}
 : ${AZURECCM_IMAGE:="quay.io/openshift/origin-azure-cloud-controller-manager:$RELEASE"}

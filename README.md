@@ -14,7 +14,7 @@ podman login -u <username> -p <token> https://registry.ci.openshift.org
 
 ### Obtaining OpenShift's quay.io credentials
 
-For OpenSHift's quay.io, the credentials need to be taken from https://cloud.redhat.com/openshift/create/local. Click `Download pull secret` and store `pull-secret.txt` in a safe location on your computer.
+For OpenShift's quay.io, the credentials need to be taken from https://cloud.redhat.com/openshift/create/local. Click `Download pull secret` and store `pull-secret.txt` in a safe location on your computer.
 
 **NOTE:** These are not your personal credentials, you won't be able to use them to access your personal quay.io account. These credentials are required to obtain the base release image only.
 
@@ -48,7 +48,7 @@ Options:
 -u, --username  registered username in quay.io
 -t, --tag       push to a custom tag in your origin release image repo, default: latest
 -r, --release   openshift release version, default: 4.9
--a, --auth      path of registry auth file, default: ./config.json
+-a, --auth      path of registry auth file, default: ./pull-secret.txt
 --cccmo         custom cluster-cloud-controller-manager-operator image name, default: quay.io/openshift/origin-cluster-cloud-controller-manager-operator:4.9
 --aws-ccm       custom aws cloud-controller-manager image name, default: quay.io/openshift/origin-aws-cloud-controller-manager:4.9
 --azure-ccm     custom azure cloud-controller-manager image name, default: quay.io/openshift/origin-azure-cloud-controller-manager:4.9
