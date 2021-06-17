@@ -117,14 +117,19 @@ if [ ! -f "$OC_REGISTRY_AUTH_FILE" ]; then
     exit 1
 fi
 
+echo "Creating local image registry at localhost:5000"
+docker rm -fi registry
+docker run -d -p 5000:5000 --restart=always --name registry docker.io/library/registry:2
+
 PREFIX="Pull From: "
 DEST_IMAGE="quay.io/$USERNAME/origin-release:$TAG"
-TEMP_IMAGE="docker.io/$USERNAME/origin-release:$TAG"
+TEMP_IMAGE="localhost:5000/origin-release:$TAG"
 FROM_IMAGE=$(curl -s  https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp-dev-preview/latest-$RELEASE/release.txt | grep "$PREFIX" | sed -e "s/^$PREFIX//")
 
 echo "Start building local release image"
 
 oc adm release new \
+    --insecure=true \
     --registry-config="$OC_REGISTRY_AUTH_FILE" \
     --from-release="$FROM_IMAGE" \
     --to-image="$TEMP_IMAGE" \
@@ -141,13 +146,16 @@ oc adm release new \
 
 echo "The image has been created as $TEMP_IMAGE"
 
-docker pull $TEMP_IMAGE
+docker pull $TEMP_IMAGE --tls-verify=false
 
 docker image tag $TEMP_IMAGE $DEST_IMAGE
 
 docker push $DEST_IMAGE
 
 echo "Successfully pushed $DEST_IMAGE"
+
+echo "Destroying the local registry"
+docker rm -fi registry
 
 echo "Testing release image"
 docker pull $DEST_IMAGE

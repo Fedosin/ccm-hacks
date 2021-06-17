@@ -18,14 +18,6 @@ For OpenSHift's quay.io, the credentials need to be taken from https://cloud.red
 
 **NOTE:** These are not your personal credentials, you won't be able to use them to access your personal quay.io account. These credentials are required to obtain the base release image only.
 
-### Accessing docker.io
-
-The release image builder uses docker.io as a temporary registry. To allow the script to access it, you need to login there with the following command:
-
-```sh
-podman login -u <username> -p <password> --authfile /path/to/pull-secret.txt docker.io
-```
-
 ## Build an operator image with your custom changes
 
 ```txt
