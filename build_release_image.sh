@@ -10,7 +10,7 @@ help() {
     echo "-h, --help      show this message"
     echo "-u, --username  registered username in quay.io"    
     echo "-t, --tag       push to a custom tag in your origin release image repo, default: latest"
-    echo "-r, --release   openshift release version, default: 4.8"
+    echo "-r, --release   openshift release version, default: 4.9"
     echo "-a, --auth      path of registry auth file, default: ./config.json"
     echo "--cccmo         custom cluster-cloud-controller-manager-operator image name, default: quay.io/openshift/origin-cluster-cloud-controller-manager-operator:$RELEASE"
     echo "--aws-ccm       custom aws cloud-controller-manager image name, default: quay.io/openshift/origin-aws-cloud-controller-manager:$RELEASE"
@@ -24,7 +24,7 @@ help() {
 
 : ${GOPATH:=${HOME}/go}
 : ${TAG:="latest"}
-: ${RELEASE:="4.8"}
+: ${RELEASE:="4.9"}
 : ${OC_REGISTRY_AUTH_FILE:="config.json"}
 : ${CCCMO_IMAGE:="quay.io/openshift/origin-cluster-cloud-controller-manager-operator:$RELEASE"}
 : ${AWSCCM_IMAGE:="quay.io/openshift/origin-aws-cloud-controller-manager:$RELEASE"}
@@ -119,6 +119,7 @@ fi
 
 PREFIX="Pull From: "
 DEST_IMAGE="quay.io/$USERNAME/origin-release:$TAG"
+TEMP_IMAGE="docker.io/$USERNAME/origin-release:$TAG"
 FROM_IMAGE=$(curl -s  https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp-dev-preview/latest-$RELEASE/release.txt | grep "$PREFIX" | sed -e "s/^$PREFIX//")
 
 echo "Start building local release image"
@@ -126,7 +127,7 @@ echo "Start building local release image"
 oc adm release new \
     --registry-config="$OC_REGISTRY_AUTH_FILE" \
     --from-release="$FROM_IMAGE" \
-    --to-file="origin-release.tar" \
+    --to-image="$TEMP_IMAGE" \
     --server https://api.ci.openshift.org \
     -n openshift \
     cluster-cloud-controller-manager-operator=$CCCMO_IMAGE \
@@ -138,13 +139,13 @@ oc adm release new \
     `[ ! -z "$KCMO_IMAGE" ] && echo cluster-kube-controller-manager-operator=$KCMO_IMAGE` \
     `[ ! -z "$MCO_IMAGE" ] && echo machine-config-operator=$MCO_IMAGE`
 
-echo "Local release image is saved to $PWD/origin-release.tar"
+echo "The image has been created as $TEMP_IMAGE"
 
-docker import origin-release.tar $DEST_IMAGE
+docker pull $TEMP_IMAGE
+
+docker image tag $TEMP_IMAGE $DEST_IMAGE
 
 docker push $DEST_IMAGE
-
-rm -f origin-release.tar
 
 echo "Successfully pushed $DEST_IMAGE"
 

@@ -18,6 +18,14 @@ For OpenSHift's quay.io, the credentials need to be taken from https://cloud.red
 
 **NOTE:** These are not your personal credentials, you won't be able to use them to access your personal quay.io account. These credentials are required to obtain the base release image only.
 
+### Accessing docker.io
+
+The release image builder uses docker.io as a temporary registry. To allow the script to access it, you need to login there with the following command:
+
+```sh
+podman login -u <username> -p <password> --authfile /path/to/pull-secret.txt docker.io
+```
+
 ## Build an operator image with your custom changes
 
 ```txt
@@ -47,13 +55,13 @@ Options:
 -h, --help      show this message
 -u, --username  registered username in quay.io
 -t, --tag       push to a custom tag in your origin release image repo, default: latest
--r, --release   openshift release version, default: 4.8
+-r, --release   openshift release version, default: 4.9
 -a, --auth      path of registry auth file, default: ./config.json
---cccmo         custom cluster-cloud-controller-manager-operator image name, default: quay.io/openshift/origin-cluster-cloud-controller-manager-operator:4.8
---aws-ccm       custom aws cloud-controller-manager image name, default: quay.io/openshift/origin-aws-cloud-controller-manager:4.8
---azure-ccm     custom azure cloud-controller-manager image name, default: quay.io/openshift/origin-azure-cloud-controller-manager:4.8
---azure-node    custom azure node manager image name, default: quay.io/openshift/origin-azure-cloud-node-manager:4.8
---openstack-ccm custom openstack cloud-controller-manager image name, default: quay.io/openshift/origin-openstack-cloud-controller-manager:4.8
+--cccmo         custom cluster-cloud-controller-manager-operator image name, default: quay.io/openshift/origin-cluster-cloud-controller-manager-operator:4.9
+--aws-ccm       custom aws cloud-controller-manager image name, default: quay.io/openshift/origin-aws-cloud-controller-manager:4.9
+--azure-ccm     custom azure cloud-controller-manager image name, default: quay.io/openshift/origin-azure-cloud-controller-manager:4.9
+--azure-node    custom azure node manager image name, default: quay.io/openshift/origin-azure-cloud-node-manager:4.9
+--openstack-ccm custom openstack cloud-controller-manager image name, default: quay.io/openshift/origin-openstack-cloud-controller-manager:4.9
 --kapio         custom kube-apiserver-operator image name, default: current kube-apiserver-operator image from the release payload
 --kcmo          custom kube-controller-manager-operator image name, default: current kube-controller-manager-operator image from the release payload
 --mco           custom machine-config-operator image name, default: current machine-config-operator image from the release payload
