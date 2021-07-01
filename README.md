@@ -54,7 +54,6 @@ Options:
 --azure-ccm     custom azure cloud-controller-manager image name, default: quay.io/openshift/origin-azure-cloud-controller-manager:4.9
 --azure-node    custom azure node manager image name, default: quay.io/openshift/origin-azure-cloud-node-manager:4.9
 --openstack-ccm custom openstack cloud-controller-manager image name, default: quay.io/openshift/origin-openstack-cloud-controller-manager:4.9
---kapio         custom kube-apiserver-operator image name, default: current kube-apiserver-operator image from the release payload
 --kcmo          custom kube-controller-manager-operator image name, default: current kube-controller-manager-operator image from the release payload
 --mco           custom machine-config-operator image name, default: current machine-config-operator image from the release payload
 ```

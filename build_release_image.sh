@@ -17,7 +17,6 @@ help() {
     echo "--azure-ccm     custom azure cloud-controller-manager image name, default: quay.io/openshift/origin-azure-cloud-controller-manager:$RELEASE"
     echo "--azure-node    custom azure node manager image name, default: quay.io/openshift/origin-azure-cloud-node-manager:$RELEASE"
     echo "--openstack-ccm custom openstack cloud-controller-manager image name, default: quay.io/openshift/origin-openstack-cloud-controller-manager:$RELEASE"
-    echo "--kapio         custom kube-apiserver-operator image name, default: current kube-apiserver-operator image from the release payload"
     echo "--kcmo          custom kube-controller-manager-operator image name, default: current kube-controller-manager-operator image from the release payload"
     echo "--mco           custom machine-config-operator image name, default: current machine-config-operator image from the release payload"
 }
@@ -84,11 +83,6 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
 
-        --kapio)
-            KAPIO_IMAGE=$2
-            shift 2
-            ;;
-
         --kcmo)
             KCMO_IMAGE=$2
             shift 2
@@ -140,7 +134,6 @@ oc adm release new \
     aws-cloud-controller-manager=$AWSCCM_IMAGE \
     azure-cloud-node-manager=$AZURENODE_IMAGE \
     azure-cloud-controller-manager=$AZURECCM_IMAGE \
-    `[ ! -z "$KAPIO_IMAGE" ] && echo cluster-kube-apiserver-operator=$KAPIO_IMAGE` \
     `[ ! -z "$KCMO_IMAGE" ] && echo cluster-kube-controller-manager-operator=$KCMO_IMAGE` \
     `[ ! -z "$MCO_IMAGE" ] && echo machine-config-operator=$MCO_IMAGE`
 
