@@ -89,7 +89,7 @@ git rebase master
 echo "Setting operator image to $OPERATOR_IMAGE"
 
 echo "Start building operator image"
-podman build --no-cache -t $OPERATOR_IMAGE -f $DOCKERFILE
+podman build --no-cache -t $OPERATOR_IMAGE -f $DOCKERFILE .
 
 echo "Pushing operator image to quay.io"
 podman push $OPERATOR_IMAGE
