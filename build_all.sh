@@ -74,6 +74,6 @@ echo "Building and uploading a custom image for CCCMO"
 
 echo "Building a release image"
 ./build_release_image.sh -u "$USERNAME" -a "$OC_REGISTRY_AUTH_FILE" \
-    --kcmo quay.io/mfedosin/cluster-kube-controller-manager-operator:"$TAG" \
-    --mco quay.io/mfedosin/machine-config-operator:"$TAG" \
-    --cccmo quay.io/mfedosin/cluster-cloud-controller-manager-operator:"$TAG"
+    --kcmo quay.io/$USERNAME/cluster-kube-controller-manager-operator:"$TAG" \
+    --mco quay.io/$USERNAME/machine-config-operator:"$TAG" \
+    --cccmo quay.io/$USERNAME/cluster-cloud-controller-manager-operator:"$TAG"
