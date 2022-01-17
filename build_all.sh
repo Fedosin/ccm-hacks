@@ -16,7 +16,7 @@ help() {
 
 : ${TAG:="latest"}
 : ${RELEASE:="4.9"}
-: ${OC_REGISTRY_AUTH_FILE:="pull-secret.txt"}
+: ${OC_REGISTRY_AUTH_FILE:=$(pwd)"/pull-secrets/pull-secrets.json"}
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -63,17 +63,25 @@ if [ ! -f "$OC_REGISTRY_AUTH_FILE" ]; then
     exit 1
 fi
 
+# Build from https://github.com/openshift/cluster-kube-controller-manager-operator pr n 557
+# Repo for cloning constructing as https://github.com/openshift/{operator_name}
 echo "Building and uploading a custom image for KCMO"
-./build_operator_image.sh -u "$USERNAME" -o cluster-kube-controller-manager-operator -i 536 -d Dockerfile.rhel7 -t "$TAG"
+./build_operator_image.sh -u "$USERNAME" -o cluster-kube-controller-manager-operator -i 557 -d Dockerfile.rhel7 -t "$TAG"
 
+# Build from https://github.com/openshift/machine-config-operator HEAD
 echo "Building and uploading a custom image for MCO"
-./build_operator_image.sh -u "$USERNAME" -o machine-config-operator -i 2606 -t "$TAG"
+./build_operator_image.sh -u "$USERNAME" -o machine-config-operator -t "$TAG"
 
+# Build cluster-cloud-controller-manager-operator from lobziik's fork last commit
 echo "Building and uploading a custom image for CCCMO"
-./build_operator_image.sh -u "$USERNAME" -o cluster-cloud-controller-manager-operator -i 73 -t "$TAG"
+./build_operator_image.sh -u "$USERNAME" \
+                          -o cluster-cloud-controller-manager-operator \
+                          -r git@github.com:lobziik/cluster-cloud-controller-manager-operator.git \
+                          -c 18d1f30 \
+                          -t "$TAG"
 
 echo "Building a release image"
 ./build_release_image.sh -u "$USERNAME" -a "$OC_REGISTRY_AUTH_FILE" \
-    --kcmo quay.io/$USERNAME/cluster-kube-controller-manager-operator:"$TAG" \
-    --mco quay.io/$USERNAME/machine-config-operator:"$TAG" \
-    --cccmo quay.io/$USERNAME/cluster-cloud-controller-manager-operator:"$TAG"
+    --kcmo quay.io/"$USERNAME"/cluster-kube-controller-manager-operator:"$TAG" \
+    --mco quay.io/"$USERNAME"/machine-config-operator:"$TAG" \
+    --cccmo quay.io/"$USERNAME"/cluster-kube-controller-manager-operator:"$TAG"
